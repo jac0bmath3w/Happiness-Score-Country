@@ -10,6 +10,12 @@ Predicting Happiness Score based on 7 unique variables
 # Import the dataset as a Pandas dataframe
 import pandas as pd
 import matplotlib.pyplot as plt
+# Hyperparameter tuning
+
+from keras.wrappers.scikit_learn import KerasRegressor
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
 
 data = pd.read_csv('World_Happiness_2015_2017.csv')
 
@@ -85,13 +91,7 @@ plt.legend()
 plt.show()
 
 
-# Hyperparameter tuning
-
-
-from keras.wrappers.scikit_learn import KerasRegressor
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import GridSearchCV
+#Hyperparameter tuning starts here
 
 
 
