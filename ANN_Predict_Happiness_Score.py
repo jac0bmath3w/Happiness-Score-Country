@@ -136,14 +136,20 @@ plt.ylabel('Happiness Score')
 plt.legend()
 plt.show()
 
+#Store saved model
+#import pickle
+#filename = 'initial_model.sav'
+#filename = 'tuned_model.sav'
+#pickle.dump(happiness_model, open(filename, 'wb'))
+#pickle.dump(tuned_regression_model, open(filename, 'wb'))
 
-import pickle
-filename = 'initial_model.sav'
-filename = 'tuned_model.sav'
-pickle.dump(happiness_model, open(filename, 'wb'))
-pickle.dump(tuned_regression_model, open(filename, 'wb'))
 
+#loaded_model = pickle.load(open(filename, 'rb'))
+#loaded_model.predict(X_test)
 
-loaded_model = pickle.load(open(filename, 'rb'))
-loaded_model.predict(X_test)
+from sklearn.metrics import mean_squared_error
+
+mse_initial_model = mean_squared_error(y_test, predicted_happiness_scores)
+mse_tuned_model = mean_squared_error(y_test, y_pred_tuned)
+
 
