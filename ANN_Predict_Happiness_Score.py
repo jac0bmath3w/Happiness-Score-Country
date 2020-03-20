@@ -17,6 +17,13 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
 
+#For feature scaling
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScalar
+
+#For MSE
+from sklearn.metrics import mean_squared_error
+
 data = pd.read_csv('World_Happiness_2015_2017.csv')
 
 
@@ -44,8 +51,6 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.2, random_state = 0)
 
 # Feature Scaling
-
-from sklearn.preprocessing import StandardScaler
 
 sc_X = StandardScaler()
 X_train = sc_X.fit_transform(X_train)
@@ -136,6 +141,38 @@ plt.ylabel('Happiness Score')
 plt.legend()
 plt.show()
 
+#Scaling the dependent variable using Min Max Scalar and fitting a sigmoid function at the end. 
+sc_Y = MinMaxScaler(feature_range=(0,1))
+scaled_y_train = sc_Y.fit_transform(y_train.reshape(-1, 1))
+
+happiness_model_scaled = Sequential()
+
+# Adding the input layer and hidden layers
+happiness_model_scaled.add(Dense(units = 6, kernel_initializer = 'uniform', activation = 'relu', input_dim = X_train.shape[1]))
+happiness_model_scaled.add(Dropout(0.1))
+happiness_model_scaled.add(Dense(units = 6, kernel_initializer = 'uniform', activation = 'relu'))
+happiness_model_scaled.add(Dropout(0.1))
+happiness_model_scaled.add(Dense(units = 1, activation = 'sigmoid'))
+# Compiling the Model
+happiness_model_scaled.compile(optimizer='adam', loss='mean_squared_error')
+
+happiness_model_scaled.fit(X_train, scaled_y_train, epochs = 250, batch_size =25 )
+predicted_happiness_scores_scaled = happiness_model_scaled.predict(X_test)
+predicted_happiness_scores_scaled = sc_Y.inverse_transform(predicted_happiness_scores_scaled)
+
+plt.plot(y_test, color = 'red', label = 'Real Happiness Scores')
+plt.plot(predicted_happiness_scores, color = 'blue', label = 'Predicted Happiness Scores')
+plt.plot(y_pred_tuned, color = 'green', label = 'Predicted Happiness Scores Tuned Model')
+plt.plot(predicted_happiness_scores_scaled, color = 'yellow', label = 'Predicted Happiness Scores Scaled Model')
+
+plt.title('Happiness Score Prediction')
+plt.xlabel('Index')
+plt.ylabel('Happiness Score')
+plt.legend()
+plt.show()
+
+
+
 #Store saved model
 #import pickle
 #filename = 'initial_model.sav'
@@ -143,13 +180,12 @@ plt.show()
 #pickle.dump(happiness_model, open(filename, 'wb'))
 #pickle.dump(tuned_regression_model, open(filename, 'wb'))
 
-
 #loaded_model = pickle.load(open(filename, 'rb'))
 #loaded_model.predict(X_test)
 
-from sklearn.metrics import mean_squared_error
+#Calculating the Mean Squared Error
 
 mse_initial_model = mean_squared_error(y_test, predicted_happiness_scores)
 mse_tuned_model = mean_squared_error(y_test, y_pred_tuned)
-
+mse_scaled = mean_squared_error(y_test, predicted_happiness_scores_scaled)
 
